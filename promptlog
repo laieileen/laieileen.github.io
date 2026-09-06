@@ -300,3 +300,314 @@ Just write each post as a plain <a> tag linking to a blog/freshman-year-cmu.html
 
 
 
+ok some probklems:
+no cursor. is there a way to make cursor global? its for some reason insible. 
+my hosting of the sevrer is using 8gb of ram which seems unusual. thoughts?
+
+On the cursor — yes it should be global! The issue is the cursor div is inside Nav.js but the CSS * { cursor: none } might not be applying everywhere. Let's move the cursor logic out of Nav and into its own component that lives in layout.
+
+Create a new file app/Cursor.js:
+
+ooh ok! lets start setting up this system, so i can write my first post about my first year at cmu lol. just a bit delayed
+i dont think timeline fits too well, as my interests fluctuate a lot. i dont really like astrology so idk abt stars. for the other 3 can u create an interactive mockup of what it would be somewhat like?
+Let's do both at once! Setting up the markdown blog system first, then mockups.
+
+Markdown blog setup — 3 files needed:
+
+First install the required packages. In your VS Code terminal:
+
+ok! sounds good. also, how should i be updating blog posts? i dont intend to write them in vsc, probably just a markdown app like obsidian and then tranferring them to my website. i will probs also try and crosspost across medium and or substack? (thoughts on this and medium and substack as platforms?)
+
+next we can think about the about page, but i want it to be more creative. do you hav creative ideas (similar to how the desk idea is pretty unique). i dont want it to be just like a list, i would prefer it be interactive for the user
+
+Great questions! Let me tackle both:
+
+On blog workflow:
+
+The standard Next.js markdown blog workflow is actually perfect for you:
+
+Write in Obsidian (.md files)
+Copy the file into app/blog/posts/ in your project
+Push to GitHub → Vercel auto-deploys
+
+ok a few problems:
+
+my fonts arent rendering (see attached phtoos, first was before changes)
+increased padding on nav? e.g. left more in and right more in
+more padding on page content top? like how it originally was i like dmore
+Looking good overall! The font issue is because globals.css is loading Cormorant Garamond but your now/page.js still has the old @import at the top which might be conflicting. First check — open your now/page.js and see if it still has @import url(...) at the top of the style block. If yes, delete that line since globals handles it now.
+
+For issues 2 and 3, just two small CSS changes in globals.css:
+
+Nav padding (more breathing room on left and right):
+
+no @import in anything. i dont think this is the right font because its not the same as it was previously? is something not connected the layout file with any of my files? none of them have the correct serif and san serif fonts
+
+Can you open your browser DevTools (Cmd+Option+I) → Network tab → refresh the page → filter by "Font" — do you see Cormorant Garamond loading? That'll tell us if it's a loading issue or a CSS issue.
+
+yes i have this all. 
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+but the font is stlil incorrect for h1
+
+The @import looks correct! The issue is likely that your now/page.js still has its own h1 style overriding globals. Check your now/page.js — do you have this in the <style> block?
+
+ok it works when i import the 
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500&display=swap');
+into the specific page.js style section. why is that
+
+That's a quirk of how Next.js handles CSS! When you put styles inside a <style> tag directly in a component (which is what we've been doing), those styles are scoped to that component and loaded separately from globals.css. So the fonts from globals.css aren't available inside those inline style blocks.
+
+There are two ways to fix this properly:
+
+ok for some reason my website is taking like 5s to load. 
+
+what is this probelm arising from
+does my loading screen still exist? i cant see it on localhost but it might be localhost thing?
+1. The 5 second load — almost certainly the Google Fonts @import in every page file. Every time a page loads it's making a separate network request to Google's servers to fetch the fonts, and if you have it in multiple files it's doing that multiple times. This is exactly why Option A (Next.js font loading) fixes it — Next.js preloads fonts at build time instead of fetching them at runtime.
+
+Let me give you the layout.js fix:
+
+ok lets do cursor next? and also how can u do smooth scrolling?
+
+Both are easy! Let me do them both in globals.css — no new files needed.
+
+Smooth scrolling is literally one line — add this to your globals.css:
+
+awesome! and then when i draw something, i can chang eit to that somehow right? (its rly good for now tho!!)
+
+next we will impolement probs the home page. might remove the photo, and instead do the desk thing. for now what is the idea behind hwo to code this? e.g. photos that change animate when u hover and when u click its just a small popup with maybe blurb or photo?
+
+Yes exactly! When you draw something you'd just export it as an SVG, drop it in your /public folder, and swap the .cursor background for background: url('/your-drawing.svg') — easy swap later.
+
+Let's go on a tangent for a sec: for my about page, i want to have a blurb, and then an interests section. what is the best way to format this? I also what there to be conections between each of my pages. My interests: current vs future. Fountain pens, journaling, digital sysmtems, sports f1 synchro hockey gymnastics esport mcsr ON ABOUT PAGE
+Now page: my current interests that I’m looking into, link to interests? e.g. im learning about obsidian, hockey, etc. 
+
+also loading and erorr screens. sholud i use skeleton loading screens for maybe projects and blog? i think for main page i want it to be like baking a cake for u and an animation or something, blog could be envelope animation and smth about joting down my last thoughts. etc.
+
+Love this direction — the connections between pages make the site feel like a cohesive world, not just separate pages. Let me think through each piece:
+
+About page structure:
+
+Short blurb (2-3 sentences, warm + personal)
+
+Current Interests     →  links to /now
+─────────────────
+Fountain pens, journaling, digital systems...
+
+Always Interests
+─────────────────
+F1, synchro, hockey, gymnastics, esports, MCSR...
+The "current vs always" split is smart — it tells people both who you are permanently AND what you're into right now. The link from Current Interests → Now page is a great connection.
+
+Page connections map:
+
+Home → About (learn more about me), Projects (see my work), Blog (read my writing)
+About → Now (what I'm currently into)
+Now → About (my broader interests), Blog (what I'm thinking about)
+Blog → Now (current state of mind)
+Projects → Blog (write about projects eventually)
+This creates a web rather than isolated pages — recruiters AND casual visitors both have a clear path to explore.
+
+On loading/error screens — skeleton vs themed:
+
+Skeleton screens (gray placeholder boxes that pulse) are best for data-heavy pages where content varies in length — Projects and Blog make sense since you'll eventually have real dynamic content loading.
+
+Themed animations are best for personality pages — Home, About, Now.
+
+Here's what I'd suggest:
+
+Home → baking a cake animation (love this! very you)
+
+Blog → envelope opening, text like "unfolding my thoughts..."
+
+Now → something like a clock ticking, or a little sun rising
+
+Projects → skeleton loading (professional context, recruiters don't want whimsy here)
+
+About → maybe pages of a book flipping?
+
+On complexity — the baking cake animation is the most ambitious. Here's the reality check:
+
+Skeleton screens → easy, 20 min each
+Envelope animation → medium, needs Framer Motion, maybe 1-2 hours
+Baking cake → hard without Framer Motion, but totally doable as an SVG animation
+I'd suggest this order:
+
+Build skeleton screens for projects + blog first (quick win)
+Simple themed loaders for now + about
+Cake + envelope once you learn Framer Motion
+Want me to build the about page structure first, then the skeleton screens? Those are both achievable right now without new libraries!
+
+how does it work if skeleton screen AND another loading animation?
+
+Good question! You'd only use one per page — they're not combined. The choice is just about what fits the page's vibe:
+
+Skeleton screen = placeholder that mimics the shape of the real content while it loads. Feels professional, content-focused.
+
+Themed animation = something fun/branded that plays while loading. Feels personal, personality-focused.
+
+The way Next.js loading.js works, it's just one file per route — whatever you put in app/blog/loading.js shows while that page loads, then disappears when content is ready. So you pick one approach per page.
+
+Your map would be:
+
+app/loading.js          → cake animation (home)
+app/blog/loading.js     → envelope animation  
+app/now/loading.js      → simple clock or sun
+app/about/loading.js    → book pages flipping
+app/projects/loading.js → skeleton screen
+Each is completely independent — blog gets its envelope, projects gets its skeleton, home gets its cake. They never overlap.
+
+One nuance: on localhost everything loads so fast you'll rarely see these. They matter most for:
+
+First visit (fonts + JS loading)
+Slow connections
+Once your blog has real markdown files being parsed
+So don't spend too long perfecting loading screens until your content is more built out — skeleton for projects/blog now, fun animations later when Framer Motion is in the mix. Sound good?
+
+Yes to all three — here's how each works:
+
+Photo of your actual bag:
+Just put it in /public like your profile photo. Then in the code:
+
+jsx
+<img src="/bag.jpg" alt="my bag" />
+Way more personal than an SVG placeholder. A flat lay photo of your bag would look really cute — shoot it from above on a nice surface.
+
+Drawing your own items:
+Yes! That's exactly the move. Each item would be a small drawing exported as a PNG or SVG, dropped in /public/bag-items/ and referenced like:
+
+jsx
+<img src="/bag-items/fountain-pen.png" />
+For now we'd use emojis as placeholders and you swap them out as you draw each one. You don't have to draw them all at once — do them one by one over summer.
+
+Minecraft inventory background:
+Yes, import a PNG! The classic Minecraft inventory texture is just a gray pixel art background. You can:
+
+Find the actual Minecraft inventory texture online (it's just a .png)
+Or I can recreate it purely in CSS (which is what the mockup did — that double-border pixel effect is just CSS borders, no image needed)
+My honest recommendation:
+
+CSS for the inventory background (no image needed, looks clean, loads fast)
+Real photo for your bag
+Emoji placeholders now → your drawings later
+Want me to build the full component now with a photo placeholder for the bag and emoji items? We can wire it all up so you just swap files later!
+
+canyou create a handoff doc with goal, current state, files, changed, failed attepts, next step for this? i want to start a new thread so it uses less tokens
+
+Ran a command, read a file
+There's your handoff doc! It covers:
+
+Full design system (colors, fonts, hex codes)
+Every file and where it lives
+All the bugs we hit and how we fixed them
+Next steps in priority order
+How to deploy
+Context paragraph for the next Claude session
+To start a new thread, just upload this file and say something like "I'm building my personal website, here's my handoff doc — let's work on the Minecraft bag inventory for my now page." Claude will have everything it needs to pick up right where we left off!
+
+Good luck with the writing too — excited to see the freshman year post go live 🎉
+
+
+Website handoff
+Document·MD 
+
+
+how does it work if skeleton screen AND another loading animation?
+
+Good question! You'd only use one per page — they're not combined. The choice is just about what fits the page's vibe:
+
+Skeleton screen = placeholder that mimics the shape of the real content while it loads. Feels professional, content-focused.
+
+Themed animation = something fun/branded that plays while loading. Feels personal, personality-focused.would it be possible for there to be both? like ive seen short transitions that load into the page, and then the page has skeleton loaders that load whenver they do
+
+Yes! Those are actually two different things:
+
+Page transition = animation that plays when navigating between pages (sliding in, fading in, etc.). This is Framer Motion territory — you wrap your pages in a motion component and it animates on enter/exit.
+
+Skeleton loader = shows while data is fetching within a page (like your blog posts loading from markdown files).
+
+They're completely independent and can coexist:
+
+ooh ok. lets do skeelton loaders for projcts and blog then!
+
+Created 2 files, ran a command, read a file
+Drop loading.js into app/blog/ and app/projects/ respectively.
+
+The skeletons match your actual page layouts exactly — blog shows the post list shape, projects shows the card shape. The shimmer is rosy/pink toned to match your palette rather than the generic gray you see everywhere.
+
+To actually see them, go to Chrome DevTools → Network → Throttling → Slow 3G, then navigate to /blog or /projects. You'll see the shimmer briefly before content loads!
+
+is it possible for the top bar to load quickly and the cards to be skeleton loaders? or is that not how the loaders work
+
+Yes! That's actually how it should already work — the navbar is in layout.js which loads instantly since it's just static HTML. The loading.js only replaces the {children} part inside .page-content, not the whole page.
+
+So the flow is already:
+
+not the nav but like the header and desc unde header?
+
+Ah got it! You want the page title + subtitle to show instantly, and only the cards/posts to skeleton load. That's a slightly different pattern — instead of using loading.js, you'd use React's Suspense directly inside the page.
+
+The idea:
+
+ok! sounds good. also, how should i be updating blog posts? i dont intend to write them in vsc, probably just a markdown app like obsidian and then tranferring them to my website. i will probs also try and crosspost across medium and or substack? (thoughts on this and medium and substack as platforms?)
+
+next we can think about the about page, but i want it to be more creative. do you hav creative ideas (similar to how the desk idea is pretty unique). i dont want it to be just like a list, i would prefer it be interactive for the user
+
+Great questions! Let me tackle both:
+
+On blog workflow:
+
+The standard Next.js markdown blog workflow is actually perfect for you:
+
+Write in Obsidian (.md files)
+Copy the file into app/blog/posts/ in your project
+Push to GitHub → Vercel auto-deploys
+
+ooh ok! lets start setting up this system, so i can write my first post about my first year at cmu lol. just a bit delayed
+i dont think timeline fits too well, as my interests fluctuate a lot. i dont really like astrology so idk abt stars. for the other 3 can u create an interactive mockup of what it would be somewhat like?
+Let's do both at once! Setting up the markdown blog system first, then mockups.
+
+Markdown blog setup — 3 files needed:
+
+First install the required packages. In your VS Code terminal:ok wait circling back tot he blog psot thing, what are tehf iles i create and where do i create them? do i do those before i add the four files to my project? i just insteallded the gray matter thing
+
+Good timing! Here's the exact order and file locations:
+
+Step 1 — Create the lib folder and file:
+
+also is this bad 
+2 moderate severity vulnerabilities
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Not a big deal at all for a personal portfolio! Those vulnerability warnings are extremely common in JavaScript projects and 99% of the time they're in development dependencies (tools used to build your site) not the actual code your visitors interact with.
+
+You can check what they are by running:
+
+ok also import posts from /lib/posts the .... am i supposed to put smth else?
+
+Oh yes! The ../../lib/posts path I used assumes you're importing from app/blog/page.js — the ../.. goes up two folders to the project root, then into lib/posts.
+
+But it depends on where your file is. Here's the logic:
+
+From app/blog/page.js:
+
+js
+import { getAllPosts } from "../../lib/posts";
+From app/blog/[slug]/page.js:
+
+
+ok some probklems:
+no cursor. is there a way to make cursor global? its for some reason insible. 
+my hosting of the sevrer is using 8gb of ram which seems unusual. thoughts?
+
+On the cursor — yes it should be global! The issue is the cursor div is inside Nav.js but the CSS * { cursor: none } might not be applying everywhere. Let's move the cursor logic out of Nav and into its own component that lives in layout.
+
+Create a new file app/Cursor.js:
+
