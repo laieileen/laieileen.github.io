@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Freshman Year @ CMU — Eileen Lai</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Instrument+Sans:wght@400;500&family=DM+Mono&display=swap"
+        rel="stylesheet" />
+
+    <!-- one level up since this file is in /blog/ -->
+    <link rel="stylesheet" href="../styles.css" />
+
+    <style>
+        .post-outer {
+            display: flex;
+            align-items: flex-start;
+            gap: 4rem;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        /* ── Main post column ── */
+        .post-content {
+            max-width: 640px;
+            width: 100%;
+            min-width: 0;
+        }
+
+        /* ── Sidebar ── */
+        .toc-sidebar {
+            width: 200px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 6rem;
+            align-self: flex-start;
+        }
+
+        @media (max-width: 860px) {
+            .toc-sidebar {
+                display: none;
+            }
+
+            .post-outer {
+                max-width: 640px;
+            }
+        }
+
+        /* ── Back link ── */
+        .post-back {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            color: #a09090;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-bottom: 2.5rem;
+            transition: color 0.15s;
+        }
+
+        .post-back:hover {
+            color: #cc8895;
+        }
+
+        /* ── Meta ── */
+        .post-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .post-date {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.7rem;
+            color: #ccc;
+            letter-spacing: 0.04em;
+        }
+
+        .tag-list {
+            display: flex;
+            gap: 0.35rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.62rem;
+            color: #a09090;
+            background: #f7eeef;
+            border: 1px solid #eed8da;
+            border-radius: 4px;
+            padding: 0.15rem 0.45rem;
+            letter-spacing: 0.03em;
+        }
+
+        /* ── Title ── */
+        .post-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 400;
+            line-height: 1.1;
+            letter-spacing: -0.01em;
+            margin-bottom: 3rem;
+            color: #1a1a18;
+        }
+
+        /* ── Body ── */
+        .post-body {
+            font-size: 1rem;
+            line-height: 1.85;
+            color: #444;
+        }
+
+        .post-body p {
+            margin-bottom: 1.5rem;
+        }
+
+        .post-body h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin: 2.5rem 0 1rem;
+            color: #1a1a18;
+            scroll-margin-top: 6rem;
+        }
+
+        .post-body ul,
+        .post-body ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .post-body li {
+            margin-bottom: 0.4rem;
+        }
+
+        .post-body a {
+            color: #cc8895;
+            text-decoration: underline;
+        }
+
+        .post-body a:hover {
+            color: #1a1a18;
+        }
+
+        .post-body blockquote {
+            border-left: 2px solid #cc8895;
+            padding-left: 1.25rem;
+            margin: 2rem 0;
+            color: #888;
+            font-style: italic;
+        }
+
+        .post-body hr {
+            border: none;
+            border-top: 1px solid #f0e4e2;
+            margin: 2.5rem 0;
+        }
+
+        .post-footer {
+            margin-top: 4rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #f0e4e2;
+        }
+
+        /* ── TOC ── */
+        .toc-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.68rem;
+            color: #c4a8a0;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.75rem;
+        }
+
+        .toc-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            border-left: 1px solid #f0e4e2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .toc-list li a {
+            display: block;
+            padding: 0.35rem 0 0.35rem 0.85rem;
+            font-family: 'DM Mono', monospace;
+            font-size: 0.72rem;
+            color: #c4a8a0;
+            text-decoration: none;
+            border-left: 1.5px solid transparent;
+            margin-left: -1px;
+            transition: color 0.15s, border-color 0.15s;
+            line-height: 1.4;
+        }
+
+        .toc-list li a:hover {
+            color: #a09090;
+        }
+
+        .toc-list li a.active {
+            color: #cc8895;
+            border-left-color: #cc8895;
+            font-weight: 500;
+        }
+
+        /* ── Dark mode ── */
+        html.dark .post-title {
+            color: #f0e8e0;
+        }
+
+        html.dark .post-body {
+            color: #c0b0a8;
+        }
+
+        html.dark .post-body h2 {
+            color: #f0e8e0;
+        }
+
+        html.dark .post-body a {
+            color: #d4949f;
+        }
+
+        html.dark .post-body a:hover {
+            color: #f0e8e0;
+        }
+
+        html.dark .post-footer {
+            border-top-color: #2c2c2a;
+        }
+
+        html.dark .tag {
+            background: transparent;
+            border-color: #3c3c3a;
+            color: #7a6e6a;
+        }
+
+        html.dark .toc-list {
+            border-color: #2c2c2a;
+        }
+
+        html.dark .toc-list li a {
+            color: #7a6e6a;
+        }
+
+        html.dark .toc-list li a.active {
+            color: #d4949f;
+            border-left-color: #d4949f;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cursor" id="cursor"></div>
+
+    <nav class="nav">
+        <a href="../index.html" class="nav-logo">Eileen Lai</a>
+        <div class="nav-links">
+            <a href="../about.html">About</a>
+            <a href="../projects.html">Projects</a>
+            <a href="../blog.html" class="active">Blog</a>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">☽</button>
+        </div>
+    </nav>
+
+    <div class="page-content">
+        <div class="post-outer">
+
+            <!-- ── Post ── -->
+            <div class="post-content">
+                <a href="../blog.html" class="post-back">← back to blog</a>
+
+                <div class="post-meta">
+                    <span class="post-date">August 5, 2026</span>
+                    <div class="tag-list">
+                        <span class="tag">school</span>
+                        <span class="tag">reflection</span>
+                    </div>
+                </div>
+
+                <h1 class="post-title">Freshman Year @ CMU</h1>
+
+                <div class="post-body">
+                    <p>They say time flies when you're having fun, so I must have had fun. My first semester seemed to
+                        be more like a typical college experience, whereas second semester was more a delicate balancing
+                        act of staying warm inside, studying for difficult classes, and still trying to socialize, but I
+                        think it being more hectic was actually still fun and formative!</p>
+
+                    <h2 id="working-hard-or-hardly-working">Working Hard or Hardly Working?</h2>
+                    <p>In my fall semester, I took what I retrospectively call a "bummy schedule." Hindsight is 20/20
+                        but I also do wonder if I would have been able to handle taking harder classes during my first
+                        semester as I adjusted to living on my own.</p>
+                    <ul>
+                        <li><strong>36-202 Methods of Statistics and Data Science:</strong> The prof was delightful, his
+                            class was structured well, and I learned some statistics.</li>
+                        <li><strong>21-127 Concepts of Math:</strong> As someone who has previously taken a high-quality
+                            discrete math class, this class was bad. The idea of the course and the concepts (haha) are
+                            what should be a college-level intro proof writing course. But the execution made me not
+                            like doing discrete math. The lectures were surface-level (e.g. you could just read the
+                            notes) such that I should have just skipped class instead of being responsible.</li>
+                        <li><strong>76-101 Interpretation and Argument:</strong> What more could you ask from a first
+                            year writing course? This course neither exceeded nor underperformed my expectation.</li>
+                        <li><strong>73-104 Intro to Microeconomics Accelerated:</strong> One of my fav professors! Game
+                            theory and auctions were more quantitative and interesting to me.</li>
+                        <li><strong>21-295 Putnam Seminar:</strong> Very chill class.</li>
+                        <li><strong>80-180 Intro to Linguistics:</strong> A peculiar class. The structure and
+                            organization wasn't great, but I found the first half up until the midterm to be somewhat
+                            fascinating. The second half we spent a long time on syntax and I didn't find this as
+                            interesting, although it did take me back to cases from Latin I.</li>
+                    </ul>
+                    <p>In my second semester, I think I was already feeling less excited because the novelty of college
+                        had worn off and the weather for most of the semester was quite depressing.</p>
+                    <ul>
+                        <li><strong>15-122 Principles of Imperative Programming:</strong> I could write a whole page
+                            about this class, but tl;dr the course content was engaging and fun, but the way it's tested
+                            was treacherous (but I understand why the class is structured so).</li>
+                        <li><strong>73-103 Intro to Macroeconomics:</strong> I know many people thought this class was
+                            structured poorly, but I honestly enjoyed it since the professor explained everything well.
+                        </li>
+                        <li><strong>21-241 Matrices &amp; Linear Transformations:</strong> Woah this class was harder
+                            than expected content-wise. The content was cool to learn and the exams were moderately
+                            difficult, but I thoroughly enjoyed this class (what a good professor can do for a class!).
+                        </li>
+                        <li><strong>66-155 Grand Challenge First-Year Seminar: Sports Betting, Highs and Lows: Your
+                                Brain on Stats:</strong> I enjoyed learning sports betting terminology and the
+                            psychology of it, but I thought the statistical modeling fell a bit short, but this makes
+                            sense as it's somewhat of an intro-level course. I also found the guest speakers
+                            (specifically Bill Benter) to be very knowledgeable.</li>
+                    </ul>
+                    <p>The contrast between technicals and geneds was pretty extreme, but after my first year, I think
+                        highly of the CS classes and I'm somewhat looking forward to my sophomore year classes?</p>
+
+                    <h2 id="boston-wasabi-and-friends">Boston, Wasabi, and Friends</h2>
+                    <p>One of the most unassuming clubs I joined was <a href="https://cmimc.com/" target="_blank"
+                            rel="noopener noreferrer">CMIMC</a>. I originally went to the weekly math meetings to get
+                        free dinner, but luckily the company was good enough to keep me involved even when there was no
+                        free food involved.</p>
+                    <p>The first major event I participated in was the HMMT volunteer exchange! My good friend hosted me
+                        at MIT, and I met up with some old friends who were volunteering or competing. I thoroughly
+                        enjoyed Boston, and I have to say it's much more fun than Pittsburgh.</p>
+                    <p>Following HMMT volunteer exchange was our own competition, CMIMC! It was crazy to see how many
+                        students attended via the metric of Costco pizza. And the volunteer dinner had SO MUCH sushi.
+                        I've never seen this amount of sushi in one place before, and I definitely have not seen this
+                        much wasabi in just one box before.</p>
+                    <p>This was the moment (maybe not seeing that amount of wasabi but rather the day as a whole) where
+                        I realized that 1. I have made some friends from this club and 2. it means a lot to me already.
+                        I think I wrote something about finding the community that makes me feel at home my college
+                        applications, and perhaps this is the one. Or maybe not. But the only way to find out is to keep
+                        chugging!</p>
+
+                    <h2 id="from-water-to-land">From Water to Land</h2>
+                    <p>Those who know me may know I used to do artistic (formerly synchronized) swimming in high school.
+                        Unfortunately, this sport is too niche, and thus, CMU does not have a team. Nonetheless, I
+                        occasionally practiced at the CMU pool, but I have some qualms with swimming at CMU:</p>
+                    <ol>
+                        <li>The times the pool is open are so sparse. On any given Tuesday, I can only swim from
+                            7:00-9:00am. And as a typical college student I cannot wake up this early...</li>
+                        <li>Most of the time, Pittsburgh is cold and/or rainy, so I had to plan to shower and dry my
+                            hair and change at the pool (🫩🤯😫), rather than walking back to my dorm and doing all of
+                            the above in my dorm.</li>
+                        <li>Recreational swim lanes aren't too optimal for synchronized swimming, especially when
+                            sharing lanes. The silver lining, though, is that I made a lot of friends (who I will
+                            probably never meet again Sadge) from the intrigue of the bizarre sport that is artistic
+                            swimming.</li>
+                    </ol>
+                    <p>I also tried new forms of fitness (namely pilates and weightlifting), but I had to take a short
+                        break when traveling home. Near the end of the first semester, I was studying for finals and
+                        going down the stairs of Gates and Hillman Center for dinner. I must have been reading something
+                        extremely riveting on my phone, for I wasn't focused on going down the stairs at all, and I
+                        missed the last one and twisted my ankle... And the next day, I limped to my linguistics final
+                        and ended up with an A in that class. Hooray?</p>
+
+                    <h2 id="until-next-time">Until Next Time</h2>
+                    <p>Thanks for reading! In the past year, I've become more interested in writing and speaking. I hope
+                        to create more and consume less, and writing blog posts is one step toward doing so. This post
+                        was not perfect by any means, but this has been sitting on my computer for a long time and I
+                        think it's time to free it from my computer jail. And in transparency, I think I've already
+                        forgotten everything that happened during my first year, and I have ideas for my future writing
+                        that aren't one year of living condensed into a single page. And so hopes sophomore year brings
+                        lots of fun new stories!</p>
+                </div>
+
+                <div class="post-footer">
+                    <a href="../blog.html" class="post-back">← back to blog</a>
+                </div>
+            </div>
+
+            <!-- ── TOC sidebar ── -->
+            <aside class="toc-sidebar">
+                <p class="toc-label">On this page</p>
+                <ul class="toc-list" id="tocList">
+                    <li><a href="#" id="toc-top">Freshman Year @ CMU</a></li>
+                    <li><a href="#working-hard-or-hardly-working">Working Hard or Hardly Working?</a></li>
+                    <li><a href="#boston-wasabi-and-friends">Boston, Wasabi, and Friends</a></li>
+                    <li><a href="#from-water-to-land">From Water to Land</a></li>
+                    <li><a href="#until-next-time">Until Next Time</a></li>
+                </ul>
+            </aside>
+
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-left">Thanks for stopping by!</div>
+        <div class="footer-right">
+            <a href="mailto:eileenlai@cmu.edu">Email</a>
+            <a href="https://linkedin.com/in/laieileen" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://github.com/laieileen" target="_blank" rel="noopener noreferrer">Github</a>
+        </div>
+    </footer>
+
+    <script>
+        // ── Custom cursor ──
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', e => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        document.addEventListener('mouseover', e => {
+            if (e.target.closest('a, button')) cursor.classList.add('hovering');
+        });
+        document.addEventListener('mouseout', e => {
+            if (e.target.closest('a, button')) cursor.classList.remove('hovering');
+        });
+
+        // ── Dark mode ──
+        const toggle = document.getElementById('themeToggle');
+        const root = document.documentElement;
+        if (localStorage.getItem('theme') === 'dark') {
+            root.classList.add('dark');
+            toggle.textContent = '☀︎';
+        }
+        toggle.addEventListener('click', () => {
+            const isDark = root.classList.toggle('dark');
+            toggle.textContent = isDark ? '☀︎' : '☽';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+
+        // ── TOC active highlight ──
+        const headings = document.querySelectorAll('.post-body h2');
+        const tocLinks = document.querySelectorAll('.toc-list li a:not(#toc-top)');
+        const tocTop = document.getElementById('toc-top');
+
+        // scroll to top on title click
+        tocTop.addEventListener('click', e => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setActive(null);
+        });
+
+        function setActive(id) {
+            tocTop.classList.remove('active');
+            tocLinks.forEach(a => a.classList.remove('active'));
+            if (!id) { tocTop.classList.add('active'); return; }
+            const match = document.querySelector(`.toc-list a[href="#${id}"]`);
+            if (match) match.classList.add('active');
+        }
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) setActive(entry.target.id);
+            });
+        }, { rootMargin: '0px 0px -80% 0px', threshold: 0 });
+
+        headings.forEach(h => observer.observe(h));
+        setActive(null); // title active on load
+    </script>
+
+</body>
+
+</html>
