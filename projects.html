@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Projects — Eileen Lai</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Instrument+Sans:wght@400;500&family=DM+Mono&display=swap"
+        rel="stylesheet" />
+
+    <link rel="stylesheet" href="styles.css" />
+
+    <style>
+        .projects-content {
+            max-width: 580px;
+            width: 100%;
+        }
+
+        .projects-intro {
+            font-size: 0.875rem;
+            color: #a09090;
+            margin-top: 0.25rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* ── List ── */
+        .projects-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .project-row {
+            display: block;
+            text-decoration: none;
+            padding: 1.75rem 0;
+            border-bottom: 0.5px solid #f0e4e2;
+            position: relative;
+            transition: opacity 0.15s ease;
+            color: inherit;
+        }
+
+        .project-row:first-child {
+            border-top: 0.5px solid #f0e4e2;
+        }
+
+        .project-row:hover {
+            opacity: 0.75;
+        }
+
+        /* arrow top-right on hover */
+        .project-row::after {
+            content: '↗';
+            position: absolute;
+            top: 1.75rem;
+            right: 0;
+            font-size: 0.85rem;
+            color: #cc8895;
+            opacity: 0;
+            transition: opacity 0.15s ease, transform 0.15s ease;
+            transform: translate(-3px, 3px);
+        }
+
+        .project-row:hover::after {
+            opacity: 1;
+            transform: translate(0, 0);
+        }
+
+        /* ── Row header ── */
+        .project-row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.25rem;
+            padding-right: 1.5rem;
+        }
+
+        .project-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem;
+            font-weight: 400;
+            color: #1a1a18;
+            line-height: 1.2;
+        }
+
+        .project-date {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.65rem;
+            color: #c4a8a0;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            margin-left: 1rem;
+        }
+
+        .project-subtitle {
+            font-size: 0.8rem;
+            color: #a09090;
+            margin-bottom: 0.5rem;
+            line-height: 1.5;
+        }
+
+        .project-desc {
+            font-size: 0.82rem;
+            color: #b4a4a0;
+            line-height: 1.65;
+            margin-bottom: 0.75rem;
+            font-style: italic;
+        }
+
+        /* ── Tags ── */
+        .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .project-tag {
+            font-family: 'DM Mono', monospace;
+            font-size: 0.58rem;
+            color: #cc8895;
+            background: #fdf0f2;
+            border: 0.5px solid #f0dde0;
+            border-radius: 20px;
+            padding: 2px 8px;
+            letter-spacing: 0.02em;
+        }
+
+        /* ── Dark mode ── */
+        html.dark .project-row {
+            border-color: #2c2c2a;
+        }
+
+        html.dark .project-title {
+            color: #f0e8e0;
+        }
+
+        html.dark .project-subtitle,
+        html.dark .project-desc {
+            color: #7a6e6a;
+        }
+
+        html.dark .project-tag {
+            background: transparent;
+            border-color: #3c3c3a;
+            color: #7a6e6a;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cursor" id="cursor"></div>
+
+    <nav class="nav">
+        <a href="index.html" class="nav-logo">Eileen Lai</a>
+        <div class="nav-links">
+            <a href="about.html">About</a>
+            <a href="projects.html" class="active">Projects</a>
+            <a href="blog.html">Blog</a>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">☽</button>
+        </div>
+    </nav>
+
+    <div class="page-content">
+        <div class="projects-content">
+            <h1>Projects</h1>
+            <p class="projects-intro">Mostly things I built because I wanted them to exist.</p>
+
+            <div class="projects-list">
+
+                <a href="https://github.com/laieileen/goodreads-to-notion" target="_blank" rel="noopener noreferrer"
+                    class="project-row">
+                    <div class="project-row-header">
+                        <span class="project-title">Notion Wishlist Chrome Extension</span>
+                        <span class="project-date">2024</span>
+                    </div>
+                    <p class="project-subtitle">Save products to Notion without the copy-paste</p>
+                    <p class="project-desc">ADD YOUR DESCRIPTION HERE</p>
+                    <div class="project-tags">
+                        <span class="project-tag">JavaScript</span>
+                        <span class="project-tag">Chrome Extension API</span>
+                        <span class="project-tag">Notion API</span>
+                        <span class="project-tag">HTML/CSS</span>
+                    </div>
+                </a>
+
+                <a href="https://github.com/laieileen/f1-prediction" target="_blank" rel="noopener noreferrer"
+                    class="project-row">
+                    <div class="project-row-header">
+                        <span class="project-title">F1 Race Winner Prediction Model</span>
+                        <span class="project-date">2025</span>
+                    </div>
+                    <p class="project-subtitle">XGBoost + Monte Carlo simulator for F1 predictions</p>
+                    <p class="project-desc">ADD YOUR DESCRIPTION HERE</p>
+                    <div class="project-tags">
+                        <span class="project-tag">Python</span>
+                        <span class="project-tag">XGBoost</span>
+                        <span class="project-tag">FastF1</span>
+                        <span class="project-tag">pandas</span>
+                        <span class="project-tag">NumPy</span>
+                    </div>
+                </a>
+
+                <a href="https://github.com/laieileen/laieileen.github.io" target="_blank" rel="noopener noreferrer"
+                    class="project-row">
+                    <div class="project-row-header">
+                        <span class="project-title">This Website</span>
+                        <span class="project-date">2026</span>
+                    </div>
+                    <p class="project-subtitle">Personal portfolio built as a learning project</p>
+                    <p class="project-desc">ADD YOUR DESCRIPTION HERE</p>
+                    <div class="project-tags">
+                        <span class="project-tag">HTML</span>
+                        <span class="project-tag">CSS</span>
+                        <span class="project-tag">JavaScript</span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-left">Thanks for stopping by!</div>
+        <div class="footer-right">
+            <a href="mailto:eileenlai@cmu.edu">Email</a>
+            <a href="https://linkedin.com/in/laieileen" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            <a href="https://github.com/laieileen" target="_blank" rel="noopener noreferrer">Github</a>
+        </div>
+    </footer>
+
+    <script>
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', e => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+        document.addEventListener('mouseover', e => {
+            if (e.target.closest('a, button')) cursor.classList.add('hovering');
+        });
+        document.addEventListener('mouseout', e => {
+            if (e.target.closest('a, button')) cursor.classList.remove('hovering');
+        });
+
+        const toggle = document.getElementById('themeToggle');
+        const root = document.documentElement;
+
+        if (localStorage.getItem('theme') === 'dark') {
+            root.classList.add('dark');
+            toggle.textContent = '☀︎';
+        }
+
+        toggle.addEventListener('click', () => {
+            const isDark = root.classList.toggle('dark');
+            toggle.textContent = isDark ? '☀︎' : '☽';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+    </script>
+
+</body>
+
+</html>
