@@ -1,7 +1,7 @@
 # Crossy Road
 A classic arcade game turned into AI slop!
 
-Despite most similarities to Crossy Road, the angle of the camera is a bit different and there is no eagle that will eat you if you are AFK for too long! 
+Despite the core function of this game to be pretty Crossy Road-esque, the angle of the camera is a bit different and there is no eagle that will eat you if you are AFK for too long. Other bugs and unfinished elements are listed below. 
 
 ## Controls
 You can use the arrow keys to maneuver forward, backward, left, and right. 
@@ -17,4 +17,7 @@ Despite AI being all powerful, I suppose my agents weren't good (expensive) enou
 
 1. After you get to the end of the current canvas, you can jump to infinity in the beautiful blue sky.
 2. Sometimes you may fall off a log even if you have stood on it. I guess it's slippery?
-3. 
+3. You can see the edges of the game and the elements (logs and cars) disappearing.
+4. Some of the tree hitboxes are bizarre or larger than expected. 
+5. The left right range of the chicken is pretty limited. 
+6. There is no eagle to eat you.
