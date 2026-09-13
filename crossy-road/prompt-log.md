@@ -31,6 +31,10 @@ the angle is extremely incorrect. please take a look and reset yourself to adjus
 3. the water animatino looks like its glitching?
 4. now the chicken and trees seem to be transparent? please fix this because of the 2.5D projection. it still looks incorrect, ive attached a photo. please recreate the photo exactly. 
 
+this angle still looks wrong, should we restart?
+
+please recreate crossy road without looking at any other files, only use index.html.
+
 ## Attempt 2
 in index.html, recreate crossy road as best you can. focus first on mirroring this visual, and then we can change any functional parts later. any questions?
 
@@ -38,6 +42,22 @@ looks like the orientation of the chicken is wrong and the score seems buggy ( h
 
 nice! there is no log on the first river though so its impossibleto pass. also the screen shaking is a bit naseous, can you remove or tone it down?
 
+it looks like the score has some bugs, for some reason it has a lot of decimals at the end. please fix this. 
+
+can you makethe logs a bit more frequent and add some trees/color/decorative items!
+
+can you make it so theres a bit less trees, diff colored cars, make the logs more sporadic and less no logs then 5 logs then no logs. and if you hvae time implement the coins?
+
+the coins look good! how much are they worth?
+
+can you make it so there arent long spaces of no logs? and then can you make it so we cant walk through cars?
+
 less logs and more random space between them. and make it so we cant go thru trees. sure match the og crossy road dififculty
 
 could you make the logs a bit more sporadic. also try and extend the plane to the edges especially after we start getting good and hitting the end? and sometimes multiple cars are overlapping and we fall off logs while standing on them
+
+perfect! could you also make the tree hitbox maybe only 1x1, and then the logs still need to be a bit more sporadic. the coins and movement all look great. also try and extend the plane to the edges
+
+it looks like some of the cars are still merging together, could you fix this bug?
+
+can you extend the canvas so that we aren't jumping in blue sky space forever at the end? and extend the lines to the rest of the page since you can see where it is cutoff still. 
