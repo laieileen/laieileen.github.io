@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Crossy Road</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #9cdeee;
+            font-family: Arial Black, Impact, sans-serif;
+        }
+
+        #game {
+            position: fixed;
+            inset: 0;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        #hud {
+            pointer-events: none;
+            position: fixed;
+            inset: 0;
+            color: #fff;
+            text-align: center;
+            text-shadow: 0 4px 0 rgba(31, 82, 87, .35), 0 2px 8px rgba(0, 0, 0, .2);
+        }
+
+        #score {
+            margin-top: 24px;
+            font-size: clamp(42px, 7vw, 78px);
+            line-height: .85;
+            letter-spacing: 2px;
+        }
+
+        #best {
+            margin-top: 8px;
+            font-family: Arial, sans-serif;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 2px;
+        }
+
+        #title {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: min(410px, 90vw);
+            transition: opacity .2s;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(46px, 10vw, 86px);
+            line-height: .8;
+            letter-spacing: -3px;
+            color: #fff4c8;
+            -webkit-text-stroke: 2px #e55d42;
+            text-shadow: 0 7px 0 #c94735, 0 11px 0 rgba(0, 0, 0, .13);
+        }
+
+        #title p {
+            font: 700 14px/1.5 Arial, sans-serif;
+            letter-spacing: 1px;
+            margin: 24px 0 0;
+        }
+
+        .key {
+            display: inline-block;
+            padding: 3px 7px;
+            border-radius: 4px;
+            color: #215163;
+            background: #f6fff9;
+            box-shadow: 0 3px 0 #6aa6ae;
+            margin: 0 2px;
+        }
+
+        #again {
+            pointer-events: auto;
+            display: none;
+            margin: 20px auto;
+            border: 0;
+            border-radius: 8px;
+            padding: 13px 22px 11px;
+            background: #ffce55;
+            color: #984d26;
+            font: 900 16px Arial, sans-serif;
+            box-shadow: 0 4px 0 #d69135;
+            cursor: pointer;
+        }
+
+        #help {
+            position: absolute;
+            left: 50%;
+            bottom: 18px;
+            transform: translateX(-50%);
+            width: 100%;
+            font: 700 11px Arial, sans-serif;
+            letter-spacing: 1.5px;
+            opacity: .86;
+        }
+
+        #controls {
+            position: fixed;
+            display: grid;
+            grid-template-columns: 55px 55px 55px;
+            grid-template-rows: 48px 48px;
+            gap: 6px;
+            right: 16px;
+            bottom: 18px;
+            opacity: .88;
+        }
+
+        #controls button {
+            border: 0;
+            border-radius: 11px;
+            background: rgba(255, 255, 255, .75);
+            color: #39717d;
+            font: 900 24px Arial;
+            box-shadow: 0 3px 0 rgba(49, 105, 115, .32);
+        }
+
+        #up {
+            grid-column: 2;
+        }
+
+        #left {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        #down {
+            grid-column: 2;
+            grid-row: 2;
+        }
+
+        #right {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        @media (min-width:700px) {
+            #controls {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="game"></div>
+    <div id="hud">
+        <div id="score">0</div>
+        <div id="best">BEST 0</div>
+        <div id="title">
+            <h1>CROSSY<br>ROAD</h1>
+            <p>PRESS <span class="key">↑</span> <span class="key">←</span> <span class="key">↓</span> <span
+                    class="key">→</span> TO HOP</p><button id="again">HOP AGAIN</button>
+        </div>
+        <div id="help">DON'T GET SQUISHED · KEEP HOPPING</div>
+    </div>
+    <div id="controls"><button id="up">↑</button><button id="left">←</button><button id="down">↓</button><button
+            id="right">→</button></div>
+    <script type="module">
+        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js';
+
+        const scene = new THREE.Scene(); scene.background = new THREE.Color(0x9bdfef); scene.fog = new THREE.Fog(0x9bdfef, 22, 52);
+        const camera = new THREE.OrthographicCamera(-10, 10, 10, -10, .1, 100); camera.position.set(12, 16, 15); camera.lookAt(0, 0, -4);
+        const renderer = new THREE.WebGLRenderer({ antialias: true }); renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap; document.querySelector('#game').appendChild(renderer.domElement);
+        const hemi = new THREE.HemisphereLight(0xeaffff, 0x557c42, 2.4); scene.add(hemi); const sun = new THREE.DirectionalLight(0xfff2c9, 2.6); sun.position.set(-8, 17, 9); sun.castShadow = true; sun.shadow.mapSize.set(1024, 1024); scene.add(sun);
+        const mat = (color) => new THREE.MeshLambertMaterial({ color });
+        const box = (x, y, z, c, group = scene) => { const m = new THREE.Mesh(new THREE.BoxGeometry(x, y, z), mat(c)); m.castShadow = m.receiveShadow = true; group.add(m); return m; };
+        const lanes = [], movers = []; let player, playing = false, dead = false, score = 0, maxRow = 0, jump = null, last = performance.now();
+        // Wider than any camera view so the road never visibly ends at the screen edges.
+        const W = 50, rows = 36;
+        const colors = { grass: 0x79bd4d, grass2: 0x68af48, asphalt: 0x383f48, line: 0xf7e4a7, water: 0x55bcd5, trunk: 0x8d5c35 };
+
+        function tree(x, z) {
+            const g = new THREE.Group(); g.position.set(x, .12, z);
+            const trunk = box(.3, .9, .3, 0x835333, g); trunk.position.y = .45;
+            const crown = box(1.05, 1.0, 1.05, 0x3c9445, g); crown.position.y = 1.05; crown.rotation.y = Math.random() * .5;
+            const crown2 = box(.72, .72, .72, 0x55a94d, g); crown2.position.set(.18, 1.5, -.08); crown2.rotation.y = Math.random() * .7; g.userData = { obstacle: true, half: .65 };
+            const fruit = mat([0xf4c44e, 0xe96b55, 0x7bc96f][Math.floor(Math.random() * 3)]);
+            for (let i = 0; i < 2; i++) {
+                const dot = new THREE.Mesh(new THREE.BoxGeometry(.16, .16, .16), fruit);
+                dot.position.set((Math.random() - .5) * .65, 1.25 + Math.random() * .45, (Math.random() - .5) * .65);
+                g.add(dot);
+            }
+            scene.add(g);
+        }
+        function flower(x, z, color) {
+            const g = new THREE.Group(); g.position.set(x, .03, z);
+            const stem = box(.05, .28, .05, 0x4d913f, g); stem.position.y = .14;
+            for (let i = 0; i < 4; i++) {
+                const petal = box(.13, .13, .13, color, g);
+                const a = i * Math.PI / 2;
+                petal.position.set(Math.cos(a) * .11, .3, Math.sin(a) * .11);
+            }
+            const center = box(.1, .1, .1, 0xffd34f, g); center.position.y = .3;
+            scene.add(g);
+        }
+        function rock(x, z) {
+            const g = new THREE.Group(); g.position.set(x, .03, z);
+            const r = box(.42, .22, .32, 0x8b9698, g); r.position.y = .11; r.rotation.y = Math.random() * .8;
+            scene.add(g);
+        }
+        const coins = [];
+        function makeCoin(x, z) {
+            const g = new THREE.Group();
+            const geo = new THREE.CylinderGeometry(.22, .22, .07, 12);
+            const coin = new THREE.Mesh(geo, mat(0xffd34f));
+            coin.rotation.x = Math.PI / 2;
+            coin.position.y = .55;
+            coin.castShadow = true;
+            g.add(coin);
+            const rim = new THREE.Mesh(new THREE.TorusGeometry(.22, .025, 6, 12), mat(0xffa92f));
+            rim.rotation.x = Math.PI / 2;
+            rim.position.y = .55;
+            g.add(rim);
+            g.position.set(x, 0, z);
+            g.userData = { collected: false };
+            scene.add(g);
+            coins.push(g);
+            return g;
+        }
+
+        function makeCar(lane) {
+            const g = new THREE.Group();
+            const carColors = [0xe9574f, 0x4f8ed8, 0xf2b84b, 0x62b96a, 0x9a6bd6, 0xe77aa8];
+            const carColor = carColors[Math.floor(Math.random() * carColors.length)];
+            const body = box(1.55, .43, .78, carColor, g); body.position.y = .38; const top = box(.78, .38, .7, carColor, g); top.position.set(-.12, .77, 0); const glass = mat(0xbce9ec); const wgeo = new THREE.BoxGeometry(.25, .25, .14);[[-.52, -.46], [.52, -.46], [-.52, .46], [.52, .46]].forEach(([x, z]) => { let w = new THREE.Mesh(wgeo, mat(0x20262b)); w.position.set(x, .22, z); g.add(w) }); g.userData = { lane, half: .85 }; scene.add(g); return g;
+        }
+        function makeLog(lane) { const g = new THREE.Group(); const b = box(3.1, .42, .82, colors.trunk, g); b.position.y = .31; const end = new THREE.Mesh(new THREE.CylinderGeometry(.41, .41, .045, 8), mat(0xd19b57)); end.rotation.z = Math.PI / 2; end.position.set(1.57, .31, 0); g.add(end); g.userData = { lane, half: 1.55, log: true }; scene.add(g); return g; }
+        function addLane(z) {
+            let type;
+            if (z < 3) type = 'grass'; else { const r = Math.random(); type = r < .42 ? 'grass' : r < .8 ? 'road' : 'water'; }
+            const lane = { z, type, dir: Math.random() < .5 ? -1 : 1, speed: .025 + Math.random() * .035, items: [] }; lanes.push(lane);
+            const floor = box(W, .22, 1, type === 'road' ? colors.asphalt : type === 'water' ? colors.water : (z % 2 ? colors.grass : colors.grass2)); floor.position.set(0, -.12, z); floor.receiveShadow = true;
+            if (type === 'grass' && z > 2) {
+                if (Math.random() < .38) makeCoin(Math.random() * 11 - 5.5, z);
+                const n = Math.random() < .45 ? 1 : (Math.random() < .8 ? 2 : 3);
+                for (let i = 0; i < n; i++) tree((Math.random() * 13 - 6.5), z + (Math.random() - .5) * .45);
+                const flowers = 2 + Math.floor(Math.random() * 3);
+                const flowerColors = [0xf06b7a, 0xffd34f, 0xc68cff, 0xff8c4a];
+                for (let i = 0; i < flowers; i++) {
+                    flower(Math.random() * 13 - 6.5, z + (Math.random() - .5) * .55,
+                        flowerColors[Math.floor(Math.random() * flowerColors.length)]);
+                }
+                if (Math.random() < .7) rock(Math.random() * 13 - 6.5, z + (Math.random() - .5) * .55);
+            }
+            if (type === 'road') {
+                if (Math.random() < .3) makeCoin(Math.random() * 11 - 5.5, z);
+                if (z % 2 === 0) for (let x = -24; x < 25; x += 3) { let l = box(.72, .02, .06, colors.line); l.position.set(x, .02, z); } const n = 2 + Math.floor(Math.random() * 2); for (let i = 0; i < n; i++) { let o = makeCar(lane); o.position.set((Math.random() * W - W / 2), 0, z); lane.items.push(o); movers.push(o); }
+            }
+            // Place a few logs in the crossing area at startup, rather than leaving a
+            // newly generated river empty while logs travel in from the distant edges.
+            if (type === 'water') {
+                const n = 8;
+                for (let i = 0; i < n; i++) {
+                    let o = makeLog(lane);
+                    o.position.set(-14.5 + i * 3.8 + Math.random() * .35, 0, z);
+                    lane.items.push(o); movers.push(o);
+                }
+                // Small lily pads add color without changing collision behavior.
+                for (let i = 0; i < 3; i++) {
+                    const pad = box(.38, .025, .38, 0x63c95a);
+                    pad.position.set(Math.random() * 13 - 6.5, .03, z + (Math.random() - .5) * .4);
+                    pad.rotation.y = Math.random() * Math.PI;
+                }
+            }
+        }
+        for (let z = -7; z < rows; z++) addLane(z);
+        function chicken() { const g = new THREE.Group(); const body = box(.65, .64, .58, 0xfffbdf, g); body.position.y = .61; const head = box(.48, .45, .44, 0xfffbdf, g); head.position.set(.05, 1.1, 0); const beak = box(.18, .12, .15, 0xffa63d, g); beak.position.set(.35, 1.1, 0); const comb = box(.15, .19, .35, 0xf05042, g); comb.position.set(.02, 1.4, 0);[-.2, .2].forEach(z => { let eye = new THREE.Mesh(new THREE.BoxGeometry(.06, .08, .05), mat(0x222222)); eye.position.set(.27, 1.2, z); g.add(eye) }); const shadow = new THREE.Mesh(new THREE.CircleGeometry(.48, 16), new THREE.MeshBasicMaterial({ color: 0x3b633d, transparent: true, opacity: .23 })); shadow.rotation.x = -Math.PI / 2; shadow.position.y = .012; g.add(shadow); scene.add(g); return g; }
+        player = chicken(); player.position.set(0, 0, -2);
+        function reset() {
+            score = maxRow = 0; dead = false; playing = true; jump = null; player.visible = true;
+            coins.forEach(c => { c.userData.collected = false; c.visible = true; }); player.position.set(0, 0, -2); document.querySelector('#title').style.opacity = 0; document.querySelector('#again').style.display = 'none'; document.querySelector('#score').textContent = '0';
+        }
+        function die() { if (dead) return; dead = true; playing = false; player.visible = false; const best = Math.max(+localStorage.crossyBest || 0, score); localStorage.crossyBest = best; document.querySelector('#best').textContent = 'BEST ' + best; document.querySelector('#title').style.opacity = 1; document.querySelector('#again').style.display = 'block'; document.querySelector('#title p').textContent = 'YOU GOT SQUISHED!'; }
+        function hop(dx, dz) {
+            if (!playing) { reset(); return; }
+            if (jump || dead) return;
+            const tx = THREE.MathUtils.clamp(player.position.x + dx, -6.7, 6.7), tz = player.position.z + dz;
+            if (tz < -7) return;
+
+            // Treat cars and trees as solid obstacles at the destination row.
+            const targetLane = lanes.find(l => Math.abs(l.z - tz) < .45);
+            if (targetLane && targetLane.type === 'road') {
+                const blocked = targetLane.items.some(o => Math.abs(o.position.x - tx) < 1.25);
+                if (blocked) return;
+            }
+            const nearbyTrees = scene.children.filter(o => o.userData && o.userData.obstacle);
+            if (nearbyTrees.some(o => Math.abs(o.position.x - tx) < 1.05 && Math.abs(o.position.z - tz) < .7)) return;
+
+            jump = { sx: player.position.x, sz: player.position.z, tx, tz, t: 0 };
+            /* chicken model faces local +X */
+            player.rotation.y = Math.atan2(dx, dz) - Math.PI / 2;
+        }
+        addEventListener('keydown', e => { const k = e.key; if (['ArrowUp', 'w', 'W'].includes(k)) hop(0, 1); if (['ArrowDown', 's', 'S'].includes(k)) hop(0, -1); if (['ArrowLeft', 'a', 'A'].includes(k)) hop(-1, 0); if (['ArrowRight', 'd', 'D'].includes(k)) hop(1, 0); });
+        [['up', 0, 1], ['down', 0, -1], ['left', -1, 0], ['right', 1, 0]].forEach(([id, x, z]) => document.querySelector('#' + id).addEventListener('pointerdown', () => hop(x, z)));
+        document.querySelector('#again').onclick = reset; document.querySelector('#best').textContent = 'BEST ' + (+localStorage.crossyBest || 0);
+        function tick(now) {
+            requestAnimationFrame(tick); const dt = Math.min(2, (now - last) / 16.67); last = now;
+            coins.forEach(c => {
+                if (c.visible) {
+                    c.rotation.y += .08 * dt;
+                    c.position.y = .02 + Math.sin(now * .006 + c.position.z) * .05;
+                }
+            });
+            movers.forEach(o => {
+                const l = o.userData.lane;
+                const difficulty = 1 + Math.min(.75, score * .012);
+                o.position.x += l.dir * l.speed * difficulty * dt;
+                if (o.position.x > 27) o.position.x = -27;
+                if (o.position.x < -27) o.position.x = 27;
+            });
+            if (jump) {
+                jump.t += .12 * dt; const t = Math.min(1, jump.t); player.position.x = THREE.MathUtils.lerp(jump.sx, jump.tx, t); player.position.z = THREE.MathUtils.lerp(jump.sz, jump.tz, t); player.position.y = Math.sin(t * Math.PI) * .65; if (t === 1) {
+                    player.position.y = 0;
+                    const landedRow = jump.tz;
+                    jump = null;
+                    coins.forEach(c => {
+                        if (!c.userData.collected && Math.abs(c.position.x - player.position.x) < .7 && Math.abs(c.position.z - landedRow) < .45) {
+                            c.userData.collected = true;
+                            c.visible = false;
+                            score += 5;
+                        }
+                    });
+                    if (landedRow > maxRow) {
+                        maxRow = landedRow;
+                        score = Math.max(score, Math.round(maxRow + 2));
+                    }
+                    document.querySelector('#score').textContent = score;
+                }
+            }
+            if (playing && !jump) {
+                const lane = lanes.find(l => Math.abs(l.z - player.position.z) < .45); if (lane) {
+                    if (lane.type === 'road') lane.items.forEach(o => {
+                        if (Math.abs(o.position.x - player.position.x) < (o.userData.half + .34)) die();
+                    }); if (lane.type === 'water') { let safe = false; lane.items.forEach(o => { if (Math.abs(o.position.x - player.position.x) < o.userData.half) safe = true; }); if (!safe) die(); else { const log = lane.items.find(o => Math.abs(o.position.x - player.position.x) < o.userData.half); player.position.x += lane.dir * lane.speed * dt; if (Math.abs(player.position.x) > 7.3) die(); } }
+                }
+            }
+            // Keep the opening screen stable; after that, use a gentle delayed follow.
+            const targetZ = Math.max(15, player.position.z + 6); camera.position.z += (targetZ - camera.position.z) * .022 * dt; camera.lookAt(0, 0, camera.position.z - 19); renderer.render(scene, camera);
+        } requestAnimationFrame(tick);
+        function resize() { const a = innerWidth / innerHeight, s = Math.max(8, Math.min(12, innerWidth / 80)); camera.left = -s * a; camera.right = s * a; camera.top = s; camera.bottom = -s; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); } addEventListener('resize', resize); resize();
+    </script>
+</body>
+
+</html>
