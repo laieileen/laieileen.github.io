@@ -61,3 +61,9 @@ perfect! could you also make the tree hitbox maybe only 1x1, and then the logs s
 it looks like some of the cars are still merging together, could you fix this bug?
 
 can you extend the canvas so that we aren't jumping in blue sky space forever at the end? and extend the lines to the rest of the page since you can see where it is cutoff still. 
+
+perfect! Now could you also make it so the logs aren't 20 logs in a row then a lot of blank space for a long time
+
+were changes saved for the extended canvas and infinite canvas tweaks?
+
+please re-add them
