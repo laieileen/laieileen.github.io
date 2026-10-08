@@ -57,6 +57,8 @@ h1 {
     line-height: 1.1;
     letter-spacing: -0.01em;
     margin-bottom: 0.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 0.5px solid #f0e4e2;
 }
 
 /* ── Nav ── */
@@ -176,6 +178,10 @@ h1 {
 .about-content {
     max-width: 580px;
     width: 100%;
+}
+
+.about-content h1 {
+    padding-bottom: 0;
 }
 
 .about-content p {
